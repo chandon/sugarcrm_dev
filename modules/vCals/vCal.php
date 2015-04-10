@@ -63,7 +63,8 @@ class vCal extends SugarBean {
 	const UTC_FORMAT = 'Ymd\THi00\Z';
     const EOL = "\r\n";
     const TAB = "\t";
-    const CHARSPERLINE = 75;
+    // Disabling 75 char split
+    const CHARSPERLINE = 99999;
 
 	function vCal()
 	{
@@ -287,7 +288,14 @@ class vCal extends SugarBean {
     {
         $str = "";
         foreach ($ical_array as $ical) {
-            $str .= self::fold_ical_lines($ical[0], self::escape_ical_chars($ical[1])) . self::EOL;
+            if (is_array($ical[1])) {
+                $lval = create_ical_string_from_array($ical[1]);
+            }
+            else
+            {
+                $lval = self::escape_ical_chars($ical[1]);
+            }
+            $str .= self::fold_ical_lines($ical[0], $lval) . self::EOL;
         }
         return $str;
     }
